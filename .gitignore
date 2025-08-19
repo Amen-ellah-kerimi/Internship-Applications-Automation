@@ -1,0 +1,31 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+env/
+.venv/
+
+# IDE / Editor files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Environment variables
+.env
+
+# Logs
+*.log
+
+# CSV outputs (optional, if you don’t want to track candidates)
+candidates.csv
+
+# MacOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
