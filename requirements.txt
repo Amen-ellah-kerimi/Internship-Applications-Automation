@@ -1,0 +1,4 @@
+# requirements.txt for Internship Applications Automation
+
+python-dotenv>=1.0.0
+
