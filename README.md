@@ -1,5 +1,11 @@
 # [![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&pause=1000&color=F7F7F7&width=600&lines=Internship+Applications+Automation)](https://git.io/typing-svg)
 
+[![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)](https://www.python.org/)
+[![IMAP](https://img.shields.io/badge/IMAP-%23007396?style=for-the-badge)](https://tools.ietf.org/html/rfc3501)
+[![dotenv](https://img.shields.io/badge/dotenv-%233476A1?style=for-the-badge)](https://github.com/theskumar/python-dotenv)
+[![CSV](https://img.shields.io/badge/CSV-FF6C37?style=for-the-badge)](https://en.wikipedia.org/wiki/Comma-separated_values)
+
+
 This project automates the collection of internship candidates’ data from emails and stores it in a structured CSV file. It reduces manual work, ensures data consistency, and provides a central repository for all applicants.
 
 ---
