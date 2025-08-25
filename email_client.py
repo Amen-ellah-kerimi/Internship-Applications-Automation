@@ -1,22 +1,34 @@
 import imaplib
+import logging
 
 def validate_email_creds(user, password):
     if user is None or password is None:
+        logging.error("EMAIL_USER or EMAIL_PASS not set in .env")
         raise ValueError("EMAIL_USER or EMAIL_PASS not set in .env")
 
-
 def connect_email(user, password, server):
-    mail = imaplib.IMAP4_SSL(server)
-    mail.login(user, password)
-    mail.select("inbox")
-    return mail
+    try:
+        mail = imaplib.IMAP4_SSL(server)
+        mail.login(user, password)
+        mail.select("inbox")
+        return mail
+    except Exception:
+        logging.exception("Error connecting to email server")
+        raise
 
 def fetch_unread_emails(mail):
-    _, messages = mail.search(None, 'UNSEEN')
-    messages = messages[0].split()
-
-    print(f"Found {len(messages)} new internship emails")
-    return messages
+    try:
+        _, messages = mail.search(None, 'UNSEEN')
+        messages = messages[0].split()
+        logging.info(f"Found {len(messages)} new internship emails")
+        return messages
+    except Exception:
+        logging.exception("Error fetching unread emails")
+        return []
 
 def mark_email_read(mail, msg_id):
-   mail.store(msg_id, '+FLAGS','\\Seen')
+    try:
+        mail.store(msg_id, '+FLAGS','\\Seen')
+        logging.info(f"Marked email {msg_id} as read.")
+    except Exception:
+        logging.exception(f"Error marking email {msg_id} as read.")

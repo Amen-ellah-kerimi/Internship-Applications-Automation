@@ -10,16 +10,18 @@ This project automates the collection of internship candidates’ data from emai
 - **Targeted Filtering:** Processes only emails with the subject format: `Internship Application - Name - CODE`.
 - **Candidate Data Extraction:** Extracts:
   - Name
-  - Email
+  - Email (from sender)
   - Phone number
   - LinkedIn/Portfolio links
   - Email subject and sender
   - Received date
   - Notes
-- **CSV Storage:** Saves structured candidate data in `candidates.csv` while avoiding duplicates.
+  - **CV/Attachment:** Extracts and saves CVs/portfolios from email attachments.
+- **CSV Storage:** Saves structured candidate data in `candidates.csv` while avoiding duplicates. CSV fields: `name`, `email`, `phone`, `linkedin`, `subject`, `sender`, `received_date`, `notes`, `cv` (attachment path).
+- **Logging & Error Handling:** Uses Python's logging for all major actions and errors. Robust error handling prevents crashes and logs issues for review.
 - **Modular Architecture:** Code split into reusable modules:
   - `email_client.py` — email connection and fetching
-  - `parser.py` — email parsing
+  - `parser.py` — email parsing and attachment extraction
   - `candidate_extractor.py` — candidate info extraction
   - `csv_handler.py` — CSV management
   - `utils.py` — helper functions
@@ -30,9 +32,10 @@ This project automates the collection of internship candidates’ data from emai
 
 1. Connect to email inbox using credentials in `.env`.
 2. Fetch unread emails with the internship application subject pattern.
-3. Parse email content and extract candidate info.
+3. Parse email content and extract candidate info and attachments.
 4. Append data to `candidates.csv`.
 5. Mark emails as read.
+6. Log all actions and errors for traceability.
 
 ---
 
@@ -41,12 +44,8 @@ This project automates the collection of internship candidates’ data from emai
 <img width="1895" height="309" alt="Example Output" src="https://github.com/user-attachments/assets/dfef919e-d282-4eec-a4ca-cc02e96379ef" />
 
 CSV sample:
-name,email,phone,linkedin,subject,sender,received_date,notes
-Jane Doe,jane.doe@example.com
-,+1234567890,https://www.linkedin.com/in/janedoe,Internship
- Application - Jane Doe - 101,Amen Ellah Kerimi mamap4110@gmail.com
-,2025-08-22 12:57:22,
-
+name,email,phone,linkedin,subject,sender,received_date,notes,cv
+Jane Doe,jane.doe@example.com,+1234567890,https://www.linkedin.com/in/janedoe,Internship Application - Jane Doe - PY,Amen Ellah Kerimi mamap4110@gmail.com,2025-08-22 12:57:22,,attachments/jane_doe_cv.pdf
 
 ---
 
@@ -66,9 +65,9 @@ Jane Doe,jane.doe@example.com
 ## ⚡ Future Enhancements
 
 - Map internship codes to human-readable **internship types**.
-- Validate candidate entries to prevent duplicates.
-- Support **attachments** (CVs, portfolios, etc.).
-- Add logging and reporting features.
+- Advanced reporting features.
+- More robust duplicate detection.
+- Support for additional attachment types.
 
 ---
 
@@ -82,3 +81,24 @@ Install dependencies:
 
 ```bash
 pip install -r requirements.txt
+```
+
+---
+
+## ⏳ Running the Script in the Background
+
+- By default, the script runs in a loop and checks for new emails every 5 minutes.
+- For production, you can use cron or systemd to run the script periodically:
+  - Example cron: `*/5 * * * * python /path/to/main.py`
+
+---
+
+## 🤝 How to Contribute
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for setup, coding standards, and contribution guidelines.
+
+---
+
+## 📞 Support
+
+For questions or suggestions, open an issue or contact the maintainer.
