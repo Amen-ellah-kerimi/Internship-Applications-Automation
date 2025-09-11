@@ -1,0 +1,7 @@
+# Default configuration for email scraping
+imap_server: "imap.gmail.com" # IMAP server to connect to
+email_user: "" # User/email address (override in .env or CLI)
+email_pass: "" # Password or app token (override in .env or CLI)
+folder: "INBOX" # Mail folder to check
+search_criteria: "UNSEEN" # IMAP search criteria
+timeout_seconds: 30 # Timeout for email operations

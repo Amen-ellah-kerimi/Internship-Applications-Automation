@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Internship Candidates Dashboard</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <script src="{{ url_for('static', filename='scripts.js') }}" defer></script>
+</head>
+<body>
+  <header>
+    <h1>Internship Candidates</h1>
+    <nav>
+      <a href="{{ url_for('dashboard') }}">Dashboard</a>
+      <a href="{{ url_for('settings') }}">Settings</a>
+    </nav>
+  </header>
+  <main>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+      <div id="flash-messages">
+        {% for category, message in messages %}
+        <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+      {% endif %}
+    {% endwith %}
+
+    <div class="actions">
+      <form method="POST" action="{{ url_for('dashboard') }}" onsubmit="return confirmScrape();">
+        <button type="submit" class="primary">Scrape New Candidates</button>
+      </form>
+    </div>
+
+    <div class="table-responsive">
+      <table id="candidates-table">
+        <thead>
+          <tr>
+            <th onclick="sortTable(0)">Name</th>
+            <th onclick="sortTable(1)">Email</th>
+            <th onclick="sortTable(2)">Phone</th>
+            <th onclick="sortTable(3)">LinkedIn</th>
+            <th onclick="sortTable(4)">Internship</th>
+            <th onclick="sortTable(5)">Applied On</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for candidate in candidates %}
+          <tr onclick="window.location='{{ url_for("candidate_detail", candidate_id=candidate.id) }}'">
+            <td>{{ candidate.name }}</td>
+            <td>{{ candidate.email }}</td>
+            <td>{{ candidate.phone or '' }}</td>
+            <td>
+              {% if candidate.linkedin %}
+                <a href="{{ candidate.linkedin }}" target="_blank">Profile</a>
+              {% endif %}
+            </td>
+            <td>{{ candidate.internship or '' }}</td>
+            <td>{{ candidate.applied_on.strftime('%Y-%m-%d %H:%M') }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </main>
+</body>
+</html>

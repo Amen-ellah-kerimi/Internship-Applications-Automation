@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Candidate Details</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="{{ url_for('static', filename='scripts.js') }}" defer></script>
+</head>
+<body>
+    <header>
+        <h1>Candidate Details</h1>
+        <nav>
+            <a href="{{ url_for('dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('settings') }}">Settings</a>
+        </nav>
+    </header>
+    <main>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div id="flash-messages">
+              {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+
+        <section class="candidate-info">
+            <h2>{{ candidate.name }}</h2>
+            <ul>
+                <li><strong>Email:</strong> {{ candidate.email }}</li>
+                <li><strong>Phone:</strong> {{ candidate.phone or '—' }}</li>
+                <li><strong>LinkedIn:</strong>
+                    {% if candidate.linkedin %}
+                        <a href="{{ candidate.linkedin }}" target="_blank">{{ candidate.linkedin }}</a>
+                    {% else %}
+                        —
+                    {% endif %}
+                </li>
+                <li><strong>Internship:</strong> {{ candidate.internship or '—' }}</li>
+                <li><strong>Applied On:</strong> {{ candidate.applied_on.strftime('%Y-%m-%d %H:%M') }}</li>
+            </ul>
+        </section>
+
+        <section class="attachments">
+            <h3>Attachments</h3>
+            {% if attachments %}
+                <ul>
+                    {% for att in attachments %}
+                        <li>
+                            <a href="{{ url_for('static', filename=att.path) }}" download>{{ att.filename }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No attachments.</p>
+            {% endif %}
+        </section>
+    </main>
+</body>
+</html>

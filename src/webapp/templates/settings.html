@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Settings</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="{{ url_for('static', filename='scripts.js') }}" defer></script>
+</head>
+<body>
+    <header>
+        <h1>Settings</h1>
+        <nav>
+            <a href="{{ url_for('dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('settings') }}">Settings</a>
+        </nav>
+    </header>
+    <main>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div id="flash-messages">
+              {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+
+        <form method="POST" action="{{ url_for('settings') }}" class="settings-form">
+            <label>
+                IMAP Server
+                <input type="text" name="imap_server" value="{{ setting.imap_server }}" required>
+            </label>
+            <label>
+                Email User
+                <input type="text" name="email_user" value="{{ setting.email_user }}" required>
+            </label>
+            <label>
+                Email Password
+                <input type="password" name="email_pass" value="{{ setting.email_pass }}" required>
+            </label>
+            <label>
+                Folder
+                <input type="text" name="folder" value="{{ setting.folder }}" required>
+            </label>
+            <label>
+                Attachment Folder
+                <input type="text" name="attachment_folder" value="{{ setting.attachment_folder }}" required>
+            </label>
+            <button type="submit" class="primary">Save Settings</button>
+        </form>
+    </main>
+</body>
+</html>

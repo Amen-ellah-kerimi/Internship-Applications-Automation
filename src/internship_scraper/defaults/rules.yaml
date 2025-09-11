@@ -1,0 +1,16 @@
+# Rules for parsing and validating candidate emails
+subject_pattern: "^Internship Application - .+ - (\\w+)$"   # Regex to validate subject
+code_map:                                                    # Map internship codes to readable roles
+  PY: "Python Developer"
+  WD: "Web Developer"
+  GD: "Graphic Designer"
+  ML: "Machine Learning Intern"
+default_values:                                             # Default fallback values for missing fields
+  name: "N/A"
+  phone: "N/A"
+  linkedin: "N/A"
+  notes: ""
+attachment_folder: "attachments"                             # Where attachments will be saved
+# NOTE: This rules.yaml allows you to modify parsing rules without touching code
+# TODO: Support multiple patterns per code if needed
+# FIXME: Add more validation rules for phone/email formats

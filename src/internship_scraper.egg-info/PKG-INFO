@@ -1,0 +1,16 @@
+Metadata-Version: 2.4
+Name: internship_scraper
+Version: 0.1.0
+Summary: Python package to scrape internship applications from email and store in CSV
+Author-email: Amen Ellah Kerimi <mamap4110@gmail.com>
+Requires-Dist: python-dotenv>=1.0.0
+Requires-Dist: pandas>=2.1.0
+Requires-Dist: imapclient>=2.3.0
+Requires-Dist: PyYAML>=6.0
+Requires-Dist: colorama>=0.4.6
+Provides-Extra: dev
+Requires-Dist: pytest>=8.0.0; extra == "dev"
+Requires-Dist: black>=23.3.0; extra == "dev"
+Requires-Dist: isort>=6.0.0; extra == "dev"
+Requires-Dist: flake8>=6.0.0; extra == "dev"
+Requires-Dist: typing-extensions>=4.8.0; extra == "dev"
