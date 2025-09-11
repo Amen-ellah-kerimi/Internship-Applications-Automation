@@ -15,13 +15,27 @@ env/
 *.sublime-workspace
 
 # Environment variables
+# Environment variables
 .env
+.env.*
 
 # Logs
 *.log
 
 # CSV outputs (optional, if you don’t want to track candidates)
 candidates.csv
+
+# Database
+instance/
+src/webapp/instance/
+database.db
+
+# Attachments
+attachements/
+attachments/
+
+# Egg-info
+*.egg-info/
 
 # MacOS
 .DS_Store

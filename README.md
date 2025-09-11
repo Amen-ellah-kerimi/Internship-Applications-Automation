@@ -1,104 +1,114 @@
-# [![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&pause=1000&color=F7F7F7&width=600&lines=Internship+Applications+Automation)](https://git.io/typing-svg)
+# Internship Applications Automation
 
-This project automates the collection of internship candidates’ data from emails and stores it in a structured CSV file. It reduces manual work, ensures data consistency, and provides a central repository for all applicants.
+## Overview
+This project automates the extraction of internship candidate data from emails and provides a modern web dashboard for management. It supports attachments, robust error handling, and logging for traceability.
 
----
+## Features
+- Automatic email scraping via IMAP (Gmail/Outlook)
+- Candidate data extraction: name, email, phone, LinkedIn, GitHub, internship type, notes, attachments
+- Secure storage of credentials and attachments
+- Responsive Flask dashboard for viewing, searching, and managing candidates
+- Settings page for IMAP and internship code mapping
+- CSV export and duplicate detection
+- Logging and error handling
 
-## 📝 Features
-
-- **Automatic Email Scraping:** Connects to Gmail/Outlook inbox via IMAP and fetches unread internship application emails.
-- **Targeted Filtering:** Processes only emails with the subject format: `Internship Application - Name - CODE`.
-- **Candidate Data Extraction:** Extracts:
-  - Name
-  - Email (from sender)
-  - Phone number
-  - LinkedIn/Portfolio links
-  - Email subject and sender
-  - Received date
-  - Notes
-  - **CV/Attachment:** Extracts and saves CVs/portfolios from email attachments.
-- **CSV Storage:** Saves structured candidate data in `candidates.csv` while avoiding duplicates. CSV fields: `name`, `email`, `phone`, `linkedin`, `subject`, `sender`, `received_date`, `notes`, `cv` (attachment path).
-- **Logging & Error Handling:** Uses Python's logging for all major actions and errors. Robust error handling prevents crashes and logs issues for review.
-- **Modular Architecture:** Code split into reusable modules:
-  - `email_client.py` — email connection and fetching
-  - `parser.py` — email parsing and attachment extraction
-  - `candidate_extractor.py` — candidate info extraction
-  - `csv_handler.py` — CSV management
-  - `utils.py` — helper functions
-
----
-
-## 📈 Workflow
-
-1. Connect to email inbox using credentials in `.env`.
-2. Fetch unread emails with the internship application subject pattern.
-3. Parse email content and extract candidate info and attachments.
-4. Append data to `candidates.csv`.
-5. Mark emails as read.
-6. Log all actions and errors for traceability.
-
----
-
-## 📂 Example Output
-
-<img width="1895" height="309" alt="Example Output" src="https://github.com/user-attachments/assets/dfef919e-d282-4eec-a4ca-cc02e96379ef" />
-
-CSV sample:
-name,email,phone,linkedin,subject,sender,received_date,notes,cv
-Jane Doe,jane.doe@example.com,+1234567890,https://www.linkedin.com/in/janedoe,Internship Application - Jane Doe - PY,Amen Ellah Kerimi mamap4110@gmail.com,2025-08-22 12:57:22,,attachments/jane_doe_cv.pdf
-
----
-
-## 💻 Tech Stack
-
-### Programming
-[![Python](https://img.shields.io/badge/Python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)](https://www.python.org/)
-
-### Email Handling
-[![IMAP](https://img.shields.io/badge/IMAP-007ACC?style=for-the-badge&logo=email&logoColor=white)](https://datatracker.ietf.org/doc/html/rfc3501)
-
-### Environment Management
-[![dotenv](https://img.shields.io/badge/python--dotenv-000000?style=for-the-badge&logo=python&logoColor=white)](https://pypi.org/project/python-dotenv/)
-
----
-
-## ⚡ Future Enhancements
-
-- Map internship codes to human-readable **internship types**.
-- Advanced reporting features.
-- More robust duplicate detection.
-- Support for additional attachment types.
-
----
-
-## ⚙️ Requirements
-
-- Python 3.10+
-- `imaplib` (standard library)
-- `python-dotenv`
-
-Install dependencies:
-
-```bash
-pip install -r requirements.txt
+## Project Structure
+```
+career/
+├── docs/                # Documentation, onboarding, technical notes
+├── pyproject.toml       # Python project configuration
+├── requirements.txt     # Additional dependencies
+├── setup.py             # Setup script for .env and Fernet key
+├── .env.example         # Example environment file
+├── src/
+│   ├── internship_scraper/   # CLI and legacy scripts (ignored for webapp)
+│   └── webapp/               # Flask web application
+│       ├── app.py            # Main Flask app
+│       ├── db.py             # SQLAlchemy instance
+│       ├── models.py         # ORM models
+│       ├── routes.py         # Route registration
+│       ├── scraper.py        # Email scraping logic
+│       ├── services.py       # Business logic
+│       ├── static/           # CSS/JS assets
+│       ├── templates/        # Jinja2 HTML templates
+├── instance/            # Database file
+├── attachements/        # Saved attachments
 ```
 
----
+## Setup & Usage
+1. **Install dependencies:**
+  ```bash
+  pip install -r requirements.txt
+  ```
+2. **Run setup script to generate .env and Fernet key:**
+  ```bash
+  python setup.py
+  ```
+  - Enter your IMAP email user and password/app token when prompted.
+  - The script will generate a Fernet key and save all credentials in `.env`.
+3. **Run the Flask app:**
+  ```bash
+  python -m src.webapp.app
+  ```
+4. **Access the dashboard:**
+  - Open your browser at [http://localhost:5000](http://localhost:5000)
 
-## ⏳ Running the Script in the Background
+## Configuration
+- **.env**: Stores IMAP credentials and Fernet key.
+- **Settings page**: Allows you to update IMAP server, folder, attachment folder, and internship code mapping (JSON).
+- **Database**: Stored in `instance/database.db` (ignored by git).
+- **Attachments**: Saved in `attachements/` (ignored by git).
 
-- By default, the script runs in a loop and checks for new emails every 5 minutes.
-- For production, you can use cron or systemd to run the script periodically:
-  - Example cron: `*/5 * * * * python /path/to/main.py`
+## Security
+- **Fernet Key**: Used for encrypting sensitive data (e.g., email password) in the database. Generated by `setup.py` and stored in `.env`.
+- **IMAP Credentials**: Entered during setup and stored securely in `.env`.
 
----
+## Documentation
+- See `docs/OVERVIEW.md` for a detailed project overview and workflow.
+- See `docs/start.md` for dashboard setup instructions.
+- See `docs/task.md` for project checklist and structure.
+- See `CONTRIBUTING.md` for coding standards and contribution guidelines.
 
-## 🤝 How to Contribute
+## Example .env
+```
+EMAIL_USER=your.email@gmail.com
+EMAIL_PASS=yourpassword
+FERNET_KEY=your-generated-fernet-key
+```
 
-See [CONTRIBUTING.md](./CONTRIBUTING.md) for setup, coding standards, and contribution guidelines.
+## Example Workflow
+1. Scrape new candidates from email inbox.
+2. View and manage candidates in the dashboard.
+3. Download or read attachments (CVs, portfolios).
+4. Update settings as needed.
 
----
-
-## 📞 Support
-
+## Support
 For questions or suggestions, open an issue or contact the maintainer.
+
+---
+Maintainer: Amen Ellah Kerimi <mamap4110@gmail.com>
+---
+
+## How to Get Gmail IMAP Credentials
+
+To use Gmail with this project, you need your email address and an "App Password" (not your regular password) if you have 2-Step Verification enabled.
+
+### Step-by-Step Guide:
+
+1. **Enable IMAP in Gmail:**
+  - Go to [Gmail Settings](https://mail.google.com/mail/u/0/#settings/fwdandpop)
+  - Under "Forwarding and POP/IMAP", enable "IMAP access" and save changes.
+
+2. **Generate an App Password:**
+  - Go to your [Google Account Security page](https://myaccount.google.com/security)
+  - Under "Signing in to Google", select "App passwords" (you may need to enable 2-Step Verification first).
+  - Select "Mail" as the app and "Other" (or "Custom name") for the device, e.g., "Internship Automation".
+  - Click "Generate" and copy the 16-character app password.
+
+3. **Use These Credentials:**
+  - When running `setup.py`, enter your Gmail address as the IMAP user and the app password as the IMAP password.
+  - IMAP server: `imap.gmail.com`
+
+**Note:**
+- Your regular Gmail password will not work if 2-Step Verification is enabled; you must use an app password.
+- Keep your app password secure and do not share it.
