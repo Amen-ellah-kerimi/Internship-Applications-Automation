@@ -27,34 +27,71 @@
 
         <section class="candidate-info">
             <h2>{{ candidate.name }}</h2>
-            <ul>
-                <li><strong>Email:</strong> {{ candidate.email }}</li>
-                <li><strong>Phone:</strong> {{ candidate.phone or '—' }}</li>
-                <li><strong>LinkedIn:</strong>
-                    {% if candidate.linkedin %}
-                        <a href="{{ candidate.linkedin }}" target="_blank">{{ candidate.linkedin }}</a>
-                    {% else %}
-                        —
-                    {% endif %}
-                </li>
-                <li><strong>Internship:</strong> {{ candidate.internship or '—' }}</li>
-                <li><strong>Applied On:</strong> {{ candidate.applied_on.strftime('%Y-%m-%d %H:%M') }}</li>
-            </ul>
+            <table class="candidate-table">
+                <tr><th>Email</th><td>{{ candidate.email }}</td></tr>
+                <tr><th>Phone</th><td>{{ candidate.phone or '—' }}</td></tr>
+                <tr><th>LinkedIn</th>
+                    <td>
+                        {% if candidate.linkedin %}
+                            {% set linkedin_url = candidate.linkedin %}
+                            {% if not linkedin_url.startswith('http') %}
+                                {% set linkedin_url = 'https://' + linkedin_url %}
+                            {% endif %}
+                            <a href="{{ linkedin_url }}" target="_blank">{{ candidate.linkedin }}</a>
+                        {% else %}
+                            —
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr><th>GitHub</th>
+                    <td>
+                        {% if candidate.github %}
+                            {% set github_url = candidate.github %}
+                            {% if not github_url.startswith('http') %}
+                                {% set github_url = 'https://' + github_url %}
+                            {% endif %}
+                            <a href="{{ github_url }}" target="_blank">{{ candidate.github }}</a>
+                        {% else %}
+                            —
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr><th>Internship</th><td>{{ candidate.internship or '—' }}</td></tr>
+                <tr><th>Applied On</th><td>{{ candidate.applied_on.strftime('%Y-%m-%d %H:%M') }}</td></tr>
+            </table>
         </section>
 
         <section class="attachments">
             <h3>Attachments</h3>
             {% if attachments %}
-                <ul>
+                <table class="attachments-table">
+                    <tr><th>Filename</th><th>Actions</th></tr>
                     {% for att in attachments %}
-                        <li>
-                            <a href="{{ url_for('static', filename=att.path) }}" download>{{ att.filename }}</a>
-                        </li>
+                        <tr>
+                            <td>{{ att.filename }}</td>
+                            <td>
+                                <a href="{{ url_for('view_attachment', attachment_id=att.id) }}" class="btn" target="_blank">Read</a>
+                                <button class="btn download-btn" data-filename="{{ att.filename }}" data-folder="attachements">Download</button>
+                            </td>
+                        </tr>
                     {% endfor %}
-                </ul>
+                </table>
+                <div id="download-modal" class="modal" style="display:none;">
+                  <div class="modal-content">
+                    <span class="close" id="close-modal">&times;</span>
+                    <h4>Download Attachment</h4>
+                    <p>Do you want to download <span id="modal-filename"></span>?</p>
+                    <a id="modal-download-link" href="#" download class="btn">Confirm Download</a>
+                  </div>
+                </div>
             {% else %}
                 <p>No attachments.</p>
             {% endif %}
+        </section>
+
+        <section class="candidate-notes">
+            <h3>Email Body</h3>
+            <pre>{{ candidate.notes }}</pre>
         </section>
     </main>
 </body>

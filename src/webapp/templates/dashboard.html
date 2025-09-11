@@ -4,6 +4,16 @@
   <meta charset="UTF-8">
   <title>Internship Candidates Dashboard</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <style>
+    .table-responsive {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    #candidates-table {
+      width: 100%;
+      min-width: 1000px;
+    }
+  </style>
   <script src="{{ url_for('static', filename='scripts.js') }}" defer></script>
 </head>
 <body>
@@ -41,11 +51,12 @@
             <th onclick="sortTable(3)">LinkedIn</th>
             <th onclick="sortTable(4)">Internship</th>
             <th onclick="sortTable(5)">Applied On</th>
+            <th onclick="sortTable(6)">Reviewed</th>
           </tr>
         </thead>
         <tbody>
           {% for candidate in candidates %}
-          <tr onclick="window.location='{{ url_for("candidate_detail", candidate_id=candidate.id) }}'">
+          <tr onclick="window.location='{{ url_for('candidate_detail', candidate_id=candidate.id) }}'">
             <td>{{ candidate.name }}</td>
             <td>{{ candidate.email }}</td>
             <td>{{ candidate.phone or '' }}</td>
@@ -54,8 +65,25 @@
                 <a href="{{ candidate.linkedin }}" target="_blank">Profile</a>
               {% endif %}
             </td>
-            <td>{{ candidate.internship or '' }}</td>
+            <td>
+              {% if candidate.internship %}
+                {{ candidate.internship }}
+              {% else %}
+                —
+              {% endif %}
+            </td>
             <td>{{ candidate.applied_on.strftime('%Y-%m-%d %H:%M') }}</td>
+            <td style="text-align:center;">
+              <form method="POST" action="{{ url_for('toggle_reviewed', candidate_id=candidate.id) }}" style="display:inline;" onClick="event.stopPropagation();">
+                <button type="submit" class="review-toggle-btn" title="Toggle Reviewed" style="background:none;border:none;cursor:pointer;">
+                  {% if candidate.read %}
+                    ✔️
+                  {% else %}
+                    ❌
+                  {% endif %}
+                </button>
+              </form>
+            </td>
           </tr>
           {% endfor %}
         </tbody>

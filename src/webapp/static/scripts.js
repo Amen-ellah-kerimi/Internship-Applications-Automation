@@ -1,3 +1,29 @@
+// Modal download confirmation for attachments
+document.addEventListener("DOMContentLoaded", function() {
+    const modal = document.getElementById("download-modal");
+    const closeModal = document.getElementById("close-modal");
+    const filenameSpan = document.getElementById("modal-filename");
+    const downloadLink = document.getElementById("modal-download-link");
+    document.querySelectorAll('.download-btn').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const filename = btn.getAttribute('data-filename');
+            const folder = btn.getAttribute('data-folder') || 'attachments';
+            filenameSpan.textContent = filename;
+            downloadLink.href = `/${folder}/${filename}`;
+            downloadLink.setAttribute('download', filename);
+            modal.style.display = 'block';
+        });
+    });
+    closeModal.onclick = function() {
+        modal.style.display = 'none';
+    };
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    };
+});
 // Flash message fade-out
 document.addEventListener("DOMContentLoaded", function() {
     const flashes = document.querySelectorAll('.flash');

@@ -2,10 +2,12 @@ from src.webapp.db import db
 from datetime import datetime, timezone
 from cryptography.fernet import Fernet
 import os
+from dotenv import load_dotenv
 
-# Use environment variable or generate a key if missing
-FERNET_KEY = os.environ.get("FERNET_KEY", Fernet.generate_key())
+load_dotenv()
+FERNET_KEY = os.environ.get("FERNET_KEY")
 fernet = Fernet(FERNET_KEY)
+
 
 
 class Candidate(db.Model):
@@ -19,6 +21,7 @@ class Candidate(db.Model):
     internship = db.Column(db.String(100), nullable=True)
     applied_on = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     read = db.Column(db.Boolean, default=False)
+    notes = db.Column(db.Text, nullable=True)  # Store full email body
 
     attachments = db.relationship("Attachment", back_populates="candidate", cascade="all, delete-orphan")
 
@@ -57,6 +60,9 @@ class Setting(db.Model):
 
     # Storage / attachment folder
     attachment_folder = db.Column(db.String(255), default="attachments")
+
+    # Internship code mapping (JSON string)
+    internship_code_map = db.Column(db.Text, default='{"PY": "Python Developer", "WD": "Web Developer", "GD": "Graphic Designer", "ML": "Machine Learning Intern"}')
 
     # Timestamps
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))

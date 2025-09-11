@@ -1,5 +1,6 @@
 from src.webapp.app import db
 from src.webapp.models import Candidate , Setting
+import src.webapp.scraper as scraper
 
 # ------------------------
 # Candidates
@@ -21,13 +22,15 @@ def scrape_and_save_candidates():
     Returns number of new candidates added
     """
     setting = get_settings()
-    new_candidates = scraper.fetch_and_save_emails(
+    if not getattr(setting, 'email_user', None) or not getattr(setting, 'email_pass', None):
+        return {"error": "Email and password are not configured."}
+    result = scraper.fetch_and_save_emails(
         imap_server=setting.imap_server,
         email_user=setting.email_user,
         email_pass=setting.email_pass,
         folder=setting.folder
     )
-    return new_candidates
+    return result
 
 # ------------------------
 # Settings
@@ -48,12 +51,16 @@ def get_settings():
         db.session.commit()
     return setting
 
-def update_settings(imap_server, email_user, email_pass, folder):
+def update_settings(imap_server, email_user, email_pass, folder, attachment_folder=None, internship_code_map=None):
     """Update settings in the DB"""
     setting = get_settings()
     setting.imap_server = imap_server
     setting.email_user = email_user
     setting.email_pass = email_pass
     setting.folder = folder
+    if attachment_folder is not None:
+        setting.attachment_folder = attachment_folder
+    if internship_code_map is not None:
+        setting.internship_code_map = internship_code_map
     db.session.commit()
 

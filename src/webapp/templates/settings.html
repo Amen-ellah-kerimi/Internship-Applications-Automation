@@ -46,6 +46,11 @@
                 Attachment Folder
                 <input type="text" name="attachment_folder" value="{{ setting.attachment_folder }}" required>
             </label>
+            <label>
+                Internship Code Map (JSON)
+                <textarea name="internship_code_map" rows="5" required>{{ setting.internship_code_map }}</textarea>
+                <small>Example: {"PY": "Python Developer", "WD": "Web Developer"}</small>
+            </label>
             <button type="submit" class="primary">Save Settings</button>
         </form>
     </main>
