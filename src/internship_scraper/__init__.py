@@ -1,13 +1,8 @@
-
 """
-Internship Scraper Library
+General IMAP Email Scraper Library
 
-Exposes high-level API functions for CLI, Flask, and scripts.
-
-Notes:
-	- Use run_scraper and save_to_csv for main workflows.
-	- All config is loaded from YAML and can be overridden.
-	- See individual modules for details and extension points.
+Provides modular functions and classes for connecting to IMAP, searching, fetching, parsing, and saving emails and attachments.
+Can be used as a CLI tool or imported as a library.
 """
 
-from .main import run_scraper, save_to_csv
+from .imap import IMAPClient, EmailMessage, Attachment

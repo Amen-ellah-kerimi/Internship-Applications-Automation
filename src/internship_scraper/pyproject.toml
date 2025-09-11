@@ -3,15 +3,13 @@ requires = ["setuptools>=42", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "internship_scraper"
-version = "0.1.0"
-description = "Python package to scrape internship applications from email and store in CSV"
+name = "imap_email_scraper"
+version = "0.2.0"
+description = "General-purpose Python library and CLI for scraping emails and attachments via IMAP. Modular, importable, and robust."
 authors = [{name = "Amen Ellah Kerimi", email = "mamap4110@gmail.com"}]
 
 dependencies = [
     "python-dotenv>=1.0.0",
-    "pandas>=2.1.0",
-    "imapclient>=2.3.0",
     "PyYAML>=6.0",
     "colorama>=0.4.6"
 ]
@@ -25,3 +23,5 @@ dev = [
     "typing-extensions>=4.8.0"
 ]
 
+[project.scripts]
+email-scraper = "internship_scraper.cli:main"

@@ -1,52 +1,68 @@
-
 import argparse
+import os
+import csv
 import logging
-from pathlib import Path
-from .main import run_scraper, save_to_csv
+from . import IMAPClient
 
-def main() -> None:
-    """
-    CLI entry point for internship scraper.
+def save_attachments(attachments, folder):
+    """Save attachments to disk and return list of saved file paths."""
+    os.makedirs(folder, exist_ok=True)
+    saved_files = []
+    for att in attachments:
+        if att.filename and att.data:
+            file_path = os.path.join(folder, att.filename)
+            try:
+                with open(file_path, 'wb') as f:
+                    f.write(att.data)
+                saved_files.append(file_path)
+            except Exception as e:
+                logging.error(f"Failed to save attachment {att.filename}: {e}")
+    return saved_files
 
-    Parses command-line arguments, runs the scraper, and saves results to CSV.
-
-    Notes:
-        - TODO: Add argument validation and error handling.
-        - FIXME: Logging configuration is basic; add file logging if needed.
-        - NOTE: CLI args override config settings.
-    """
-    parser = argparse.ArgumentParser(description="Run internship scraper")
-    parser.add_argument("-e", "--email", type=str, help="Email to connect")
-    parser.add_argument("-p", "--password", type=str, help="Email password or app token")
-    parser.add_argument("-f", "--folder", type=str, help="Mailbox folder to check (default from config)")
-    parser.add_argument("-c", "--code", type=str, help="Internship code to filter")
-    parser.add_argument("-o", "--output", type=str, help="Path to save CSV file (default: ./candidates.csv)")
-    parser.add_argument("--config", type=str, default="defaults/email_config.yaml", help="Path to config YAML")
-    parser.add_argument("--verbose", action="store_true", help="Enable verbose logging")
-
+def main():
+    """Run the IMAP email scraper CLI."""
+    parser = argparse.ArgumentParser(description="General IMAP Email Scraper CLI")
+    parser.add_argument('--imap-server', type=str, required=True, help='IMAP server (e.g. imap.gmail.com)')
+    parser.add_argument('--email-user', type=str, required=True, help='Email user')
+    parser.add_argument('--email-pass', type=str, required=True, help='Email password or app token')
+    parser.add_argument('--folder', type=str, default='INBOX', help='IMAP folder')
+    parser.add_argument('--attachment-folder', type=str, default='attachements', help='Folder to save attachments')
+    parser.add_argument('--csv-path', type=str, default='emails.csv', help='CSV file to save emails')
+    parser.add_argument('--search', type=str, default='UNSEEN', help='IMAP search criteria')
+    parser.add_argument('--log-level', type=str, default='INFO', help='Logging level (DEBUG, INFO, WARNING, ERROR)')
     args = parser.parse_args()
 
-    # Configure logging
-    logging.basicConfig(level=logging.DEBUG if args.verbose else logging.INFO)
+    logging.basicConfig(level=getattr(logging, args.log_level.upper(), logging.INFO),
+                        format='%(asctime)s %(levelname)s %(message)s')
 
-    # Determine output path
-    output_path = args.output if args.output else "candidates.csv"
+    try:
+        client = IMAPClient(args.imap_server, args.email_user, args.email_pass, args.folder)
+        client.connect()
+        msg_ids = client.search(args.search)
+        emails = []
+        for msg_id in msg_ids:
+            email_msg = client.fetch_email(msg_id)
+            if email_msg:
+                saved_files = save_attachments(email_msg.attachments, args.attachment_folder)
+                emails.append({
+                    "subject": email_msg.subject,
+                    "sender": email_msg.sender,
+                    "body": email_msg.body,
+                    "attachments": ", ".join(saved_files)
+                })
+                client.mark_read(msg_id)
+        client.logout()
+        # Save to CSV
+        fieldnames = ["subject", "sender", "body", "attachments"]
+        with open(args.csv_path, 'w', newline='', encoding='utf-8') as f:
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            writer.writeheader()
+            for email_row in emails:
+                writer.writerow(email_row)
+        logging.info(f"Saved {len(emails)} emails to {args.csv_path}")
+    except Exception as e:
+        logging.error(f"Error: {e}")
+        exit(1)
 
-    # Build overrides from CLI args
-    overrides = {}
-    if args.email:
-        overrides["email_user"] = args.email
-    if args.password:
-        overrides["email_pass"] = args.password
-    if args.folder:
-        overrides["email_folder"] = args.folder
-    if args.code:
-        overrides["internship_code"] = args.code
-
-    # Run scraper
-    candidates = run_scraper(config_path=args.config, overrides=overrides)
-
-    # Save to CSV
-    save_to_csv(candidates, path=output_path)
-
-    logging.info(f"Scraping complete. Saved {len(candidates)} candidates to {Path(output_path).resolve()}")
+if __name__ == "__main__":
+    main()
